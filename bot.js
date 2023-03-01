@@ -5,7 +5,10 @@ const { getRandomWish } = require("./wish");
 // replace the value below with the Telegram token you receive from @BotFather
 
 // Create a bot that uses 'polling' to fetch new updates
-const bot = new TelegramBot(process.env.TOKEN, { polling: true });
+const bot =
+  process.env.BOT_MODE === "hook"
+    ? new TelegramBot(process.env.TOKEN)
+    : new TelegramBot(process.env.TOKEN, { polling: true });
 
 // Matches "/echo [whatever]"
 
@@ -20,11 +23,11 @@ const countries = {
   Китая: "Пекин",
 };
 const advices = [
-  'Предлагаю съесть что-то вкусное!',
-  'Вам следует найти и погладить кота!',
-  'Вам необходимо прогуляться!',
-  'Вам необходимо поваляться в снегу)'
-]
+  "Предлагаю съесть что-то вкусное!",
+  "Вам следует найти и погладить кота!",
+  "Вам необходимо прогуляться!",
+  "Вам необходимо поваляться в снегу)",
+];
 
 bot.on("message", (msg) => {
   // console.log(msg)
@@ -32,9 +35,9 @@ bot.on("message", (msg) => {
   const words = msg.text.split(" ");
   const [word1, word2] = words;
   console.log(msg.from);
-  if (word1==='совет') {
-    const index=Math.floor(Math.random()*advices.length)
-    bot.sendMessage(chatId, advices[index])
+  if (word1 === "совет") {
+    const index = Math.floor(Math.random() * advices.length);
+    bot.sendMessage(chatId, advices[index]);
   }
 
   if (word1 === "курс") {
@@ -44,10 +47,9 @@ bot.on("message", (msg) => {
       bot.sendMessage(chatId, "не знаю такой валюты");
     }
   }
-  if (msg.text.toLowerCase().indexOf("поздрав")!==-1){
-bot.sendMessage(chatId, `${msg.from.first_name}, ${getRandomWish()}`)
+  if (msg.text.toLowerCase().indexOf("поздрав") !== -1) {
+    bot.sendMessage(chatId, `${msg.from.first_name}, ${getRandomWish()}`);
   }
-  
 
   /* if (msg.text==="курс евро") {
     bot.sendMessage(chatId, "74 руб.")
@@ -68,3 +70,5 @@ bot.sendMessage(chatId, `${msg.from.first_name}, ${getRandomWish()}`)
   // send a message to the chat acknowledging receipt of their message
   // bot.sendMessage(chatId, msg.text+" "+msg.from.first_name);
 });
+
+module.exports = bot;
